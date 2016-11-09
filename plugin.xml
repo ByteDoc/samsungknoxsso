@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="cordova-plugin-samsung-knox-sso-kerberos" version="0.1.0">
+    <name>Samsung-Knox-SSO-Plugin</name>
+    <description>Cordova Samsung Knox SSO Plugin</description>
+    <license>None (yet)</license>
+    <keywords>cordova,samsung,knox,sso,single-sign-on</keywords>
+    <js-module src="www/samsung-knox-sso.js" name="samsung-knox-sso">
+        <clobbers target="cordova.plugins.samsung-knox-sso" />
+    </js-module>
+	<platform name="android">
+		<config-file target="config.xml" parent="/*">
+			<feature name="SamsungKnoxSSO">
+				<param name="android-package" value="org.apache.cordova.plugin.SamsungKnoxSSO"/>
+			</feature>
+		</config-file>
+		<source-file src="src/android/SamsungKnoxSSO.java" target-dir="src/org/apache/cordova/plugin/" />
+		<framework src="src/android/app-release.gradle" custom="true" type="gradleReference" />
+		<resource-file src="aar/Samsung-Knox-SSO-SDK-ISV.aar" target="aar/Samsung-Knox-SSO-SDK-ISV.aar" />
+	</platform>
+</plugin>
