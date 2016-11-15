@@ -134,7 +134,7 @@ public class SamsungKnoxSSO extends CordovaPlugin {
 	}
     
     private boolean genericCall() {
-        
+        return true;
     }
 	
 }
