@@ -16,6 +16,6 @@
 		</config-file>
 		<source-file src="src/android/SamsungKnoxSSO.java" target-dir="src/org/apache/cordova/plugin/" />
 		<framework src="src/android/SamsungKnoxSSO.gradle" custom="true" type="gradleReference" />
-		<resource-file src="aar/samsungssoauth.jar" target="jar/samsungssoauth.jar" />
+		<resource-file src="jar/samsungssoauth.jar" target="jar/samsungssoauth.jar" />
 	</platform>
 </plugin>
