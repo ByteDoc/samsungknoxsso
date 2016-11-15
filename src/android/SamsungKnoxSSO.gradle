@@ -1,11 +1,11 @@
 repositories{
    jcenter()
    flatDir{
-    dirs 'aar'
+    dirs 'jar'
    }
    }
   dependencies {
-   compile(name:'Samsung-Knox-SSO-SDK-ISV', ext:'aar')
+   compile(name:'SamsungKnoxSSO', ext:'jar')
    }
  android {
     packagingOptions {
