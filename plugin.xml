@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-samsungknoxsso" version="0.1.0">
+        id="cordova-plugin-samsungknoxsso" version="0.1.2">
     <name>Samsung-Knox-SSO-Plugin</name>
     <description>Cordova Samsung Knox SSO Plugin</description>
     <license>None (yet)</license>
