@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="cordova-plugin-samsung-knox-sso-kerberos" version="0.1.0">
+        id="cordova-plugin-samsungknoxsso" version="0.1.0">
     <name>Samsung-Knox-SSO-Plugin</name>
     <description>Cordova Samsung Knox SSO Plugin</description>
     <license>None (yet)</license>
     <keywords>cordova,samsung,knox,sso,single-sign-on</keywords>
-    <js-module src="www/samsung-knox-sso.js" name="samsung-knox-sso">
-        <clobbers target="cordova.plugins.samsung-knox-sso" />
+    <js-module src="www/samsungknoxsso.js" name="samsungknoxsso">
+        <clobbers target="cordova.plugins.samsungknoxsso" />
     </js-module>
 	<platform name="android">
 		<config-file target="config.xml" parent="/*">

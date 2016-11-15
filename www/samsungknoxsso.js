@@ -8,7 +8,7 @@ var SamsungKnoxSsoPlugin = (function() {
         successCallback,
         errorCallback;
     function debugLog(message) {
-        console.log("samsung-knox-sso.js: " + message);
+        console.log("samsungknoxsso.js: " + message);
     }
     function isSet(checkVar) {
         return typeof (checkVar) != "undefined" && checkVar !== null && checkVar !== "";
