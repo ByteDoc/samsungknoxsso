@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.content.Context;
 
 import com.sec.android.service.authentication.*;
 import com.sec.android.service.singlesignon.aidls.*;
@@ -75,25 +76,27 @@ public class SamsungKnoxSSO extends CordovaPlugin {
 	private void getToken() {
 		AsyncTask loadTask = new AsyncTask<Void, Void, Void>() {
 
-			@Override
+			//@Override
 			protected String doInBackground(Void... params) {
                 EnterpriseAuthentication enterpriseAuth = null;
 				SecurityToken securityToken = null;
 				String mRequestedServiceAccessToken = null;
+                
+                Context context = cordova.getActivity().getApplicationContext();
                 
                 try {
                     authenticationDomain = argsObject.getString("authenticationDomain");
                 } catch (JSONException e){
                     logError("Error: JSONException " + e + " was thrown. Parameter authenticationDomain not supplied!");
                     callbackContext.error(e.getMessage());
-                    return false;
+                    return e.getMessage();
                 }
                 
 
 				try {
-                    enterpriseAuth = EnterpriseAuthentication.getInstance(SamsungKnoxSSO.this);
+                    enterpriseAuth = EnterpriseAuthentication.getInstance(context);
 					securityToken = enterpriseAuth.getSecurityToken(
-						SamsungKnoxSSO.this,
+						context,
 						"HTTP@"+authenticationDomain,		// Service URL
 						SingleSignOnTokenType.KERBEROS
 					);
@@ -106,10 +109,10 @@ public class SamsungKnoxSSO extends CordovaPlugin {
                         } catch (JSONException e){
                             logError("Error: JSONException " + e + " was thrown. argsObject not updated with securityToken!");
                             callbackContext.error(e.getMessage());
-                            return false;
+                            return e.getMessage();
                         }
                         
-						callbackContext.success(cbArray);
+						callbackContext.success(argsArray);
 					} else {
 						callbackContext.error("securityToken received is null");
 					}
