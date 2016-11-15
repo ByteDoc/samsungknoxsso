@@ -112,16 +112,16 @@ public class SamsungKnoxSSO extends CordovaPlugin {
                     callbackContext.success(argsArray);
 
                 } else {
-                    logError("--- check --- "Token received is null");
+                    logError("--- check --- Token received is null");
                     callbackContext.error("Token received is null");
                 }
             } catch (NotAuthenticatedException ex) {
                 message = ex.getMessage();
-                logError("--- MainActivity -> GetTokenTask ---", "Exception: [" + message + "]");
+                logError("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
                 callbackContext.error("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
             } catch (SecurityProviderNotFoundException ex) {
                 message = ex.getMessage();
-                logError("--- MainActivity -> GetTokenTask ---", "Exception: [" + message + "]");
+                logError("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
                 callbackContext.error("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
             }
             return message;
