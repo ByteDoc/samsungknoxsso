@@ -12,47 +12,85 @@ import com.sec.android.service.singlesignon.aidls.*;
 
 
 import java.util.*;
+import android.util.Log;
 
 public class SamsungKnoxSSO extends CordovaPlugin {
+    public enum CordovaAction {
+        GET_TOKEN, GENERIC_CALL
+    }
 
-	private JSONArray argsArray;
-	private JSONObject argsObject;
-	private CallbackContext callbackContext;
+	JSONObject argsObject;
+    JSONArray argsArray;
+    CallbackContext callbackContext;
+    CordovaAction action;
 	private String authenticationDomain;
+    private String logTag = "SamsungKnoxSSO";
 	
-	@Override
-	public boolean execute(String action, JSONArray args, CallbackContext context) throws JSONException {
-		argsArray = args;
-		callbackContext = context;
+    private void logInfo(String message) {
+        Log.i(logTag, message);
+    }
+    private void logError(String message) {
+        Log.e(logTag, message);
+    }
+    
+    @Override
+    public boolean execute(String actionString, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        logInfo("execute called for action " + actionString);
+        this.callbackContext = callbackContext;
+        // read argument object, expected as first entry in args array
+        try {
+            argsArray = args;
+            argsObject = argsArray.getJSONObject(0);
+        } catch (JSONException e){
+            logError("Error: JSONException " + e + " was thrown. No or bad argument object supplied!");
+            callbackContext.error(e.getMessage());
+            return false;
+        }
+        
+        
+        try {
+            action = CordovaAction.valueOf(actionString);
+        } catch (IllegalArgumentException e) {
+            logError("Error: JSONException " + e + " was thrown. No valid action supplied!");
+            callbackContext.error(e.getMessage());
+            return false;
+        }
 
-		// get all required parameters
-		try{
-			argsObject = argsArray.getJSONObject(0);
-			
-			//authenticationDomain = argsObject.getString("authenticationDomain");
-			authenticationDomain = "emm.samsungknox.com";
-		}catch(JSONException e){
-			callbackContext.error(e.getMessage());
-		}	
 
-		
-		if (action.equals("getToken")) {
-			getToken();
-		} else {
-			callbackContext.error("Unknow action '" + action + "' in plugin SamsungKnoxSSO");
-		}
-	}
+        switch (action) {
+
+            case GET_TOKEN:
+                getToken();
+                return true;
+            
+            case GENERIC_CALL:
+                return genericCall();
+        }
+        
+        return false;
+    }
 			
 	private void getToken() {
 		AsyncTask loadTask = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected String doInBackground(Void... params) {
+                EnterpriseAuthentication enterpriseAuth = null;
 				SecurityToken securityToken = null;
 				String mRequestedServiceAccessToken = null;
+                
+                try {
+                    authenticationDomain = argsObject.getString("authenticationDomain");
+                } catch (JSONException e){
+                    logError("Error: JSONException " + e + " was thrown. Parameter authenticationDomain not supplied!");
+                    callbackContext.error(e.getMessage());
+                    return false;
+                }
+                
 
 				try {
-					securityToken = EnterpriseAuthentication.getInstance(SamsungKnoxSSO.this).getSecurityToken(
+                    enterpriseAuth = EnterpriseAuthentication.getInstance(SamsungKnoxSSO.this);
+					securityToken = enterpriseAuth.getSecurityToken(
 						SamsungKnoxSSO.this,
 						"HTTP@"+authenticationDomain,		// Service URL
 						SingleSignOnTokenType.KERBEROS
@@ -60,13 +98,18 @@ public class SamsungKnoxSSO extends CordovaPlugin {
 					if ( securityToken != null ) {
 						//mRequestedServiceAccessToken can be sent in HTTP authorization header
 						mRequestedServiceAccessToken = securityToken.getNegotiateToken();
-						JSONObject cbObject = new JSONObject();
-						cbObject.put("token", mRequestedServiceAccessToken);
-						JSONArray cbArray = new JSONArray();
-						cbArray.put(cbOject);
+						
+						try {
+                            argsObject.put("securityToken", mRequestedServiceAccessToken);
+                        } catch (JSONException e){
+                            logError("Error: JSONException " + e + " was thrown. argsObject not updated with securityToken!");
+                            callbackContext.error(e.getMessage());
+                            return false;
+                        }
+                        
 						callbackContext.success(cbArray);
 					} else {
-						callbackContext.error("Token received is null");
+						callbackContext.error("securityToken received is null");
 					}
 				} catch (NotAuthenticatedException ex) {
 					callbackContext.error("Exception: [" + ex.getMessage()+"]");
@@ -79,5 +122,10 @@ public class SamsungKnoxSSO extends CordovaPlugin {
 		loadTask.execute();
 			
 	}
+    
+    private boolean genericCall() {
+        
+    }
 	
 }
+
