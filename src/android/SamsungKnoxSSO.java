@@ -73,59 +73,65 @@ public class SamsungKnoxSSO extends CordovaPlugin {
         return false;
     }
 			
-	private void getToken() {
-		AsyncTask loadTask = new AsyncTask<Void, Void, Void>() {
+	private class GetTokenTask extends AsyncTask<Void, Void, String> {
+        
+        @Override
+        protected String doInBackground(Void... params) {
+            EnterpriseAuthentication enterpriseAuth = null;
+            SecurityToken securityToken = null;
+            String mRequestedServiceAccessToken = null;
+            
+            Context context = cordova.getActivity().getApplicationContext();
+            
+            try {
+                authenticationDomain = argsObject.getString("authenticationDomain");
+            } catch (JSONException e){
+                logError("Error: JSONException " + e + " was thrown. Parameter authenticationDomain not supplied!");
+                callbackContext.error(e.getMessage());
+                return e.getMessage();
+            }
+            
+            try {
+                enterpriseAuth = EnterpriseAuthentication.getInstance(context);
+                securityToken = enterpriseAuth.getSecurityToken(
+                    context,
+                    "HTTP@"+authenticationDomain,		// Service URL
+                    SingleSignOnTokenType.KERBEROS
+                );
+                if (securityToken != null) {
+                    mRequestedServiceAccessToken = securityToken.getNegotiateToken();
+                    try {
+                        argsObject.put("securityToken", mRequestedServiceAccessToken);
+                    } catch (JSONException e){
+                        logError("Error: JSONException " + e + " was thrown. argsObject not updated with securityToken!");
+                        callbackContext.error(e.getMessage());
+                        return e.getMessage();
+                    }
+                    
+                    callbackContext.success(argsArray);
 
-			//@Override
-			protected String doInBackground(Void... params) {
-                EnterpriseAuthentication enterpriseAuth = null;
-				SecurityToken securityToken = null;
-				String mRequestedServiceAccessToken = null;
-                
-                Context context = cordova.getActivity().getApplicationContext();
-                
-                try {
-                    authenticationDomain = argsObject.getString("authenticationDomain");
-                } catch (JSONException e){
-                    logError("Error: JSONException " + e + " was thrown. Parameter authenticationDomain not supplied!");
-                    callbackContext.error(e.getMessage());
-                    return e.getMessage();
+                } else {
+                    logError("--- check ---", "Token received is null");
+                    callbackContext.error("Token received is null");
                 }
-                
-
-				try {
-                    enterpriseAuth = EnterpriseAuthentication.getInstance(context);
-					securityToken = enterpriseAuth.getSecurityToken(
-						context,
-						"HTTP@"+authenticationDomain,		// Service URL
-						SingleSignOnTokenType.KERBEROS
-					);
-					if ( securityToken != null ) {
-						//mRequestedServiceAccessToken can be sent in HTTP authorization header
-						mRequestedServiceAccessToken = securityToken.getNegotiateToken();
-						
-						try {
-                            argsObject.put("securityToken", mRequestedServiceAccessToken);
-                        } catch (JSONException e){
-                            logError("Error: JSONException " + e + " was thrown. argsObject not updated with securityToken!");
-                            callbackContext.error(e.getMessage());
-                            return e.getMessage();
-                        }
-                        
-						callbackContext.success(argsArray);
-					} else {
-						callbackContext.error("securityToken received is null");
-					}
-				} catch (NotAuthenticatedException ex) {
-					callbackContext.error("Exception: [" + ex.getMessage()+"]");
-				} catch (SecurityProviderNotFoundException ex) {
-					callbackContext.error("Exception: [" + ex.getMessage()+"]");
-				} 
-				return null;
-			}
-		};
-		loadTask.execute();
-			
+            } catch (NotAuthenticatedException ex) {
+                stopTimer(updateTextViewTimer);
+                message = ex.getMessage();
+                logError("--- MainActivity -> GetTokenTask ---", "Exception: [" + message + "]");
+                callbackContext.error("--- MainActivity -> GetTokenTask ---", "Exception: [" + message + "]");
+            } catch (SecurityProviderNotFoundException ex) {
+                stopTimer(updateTextViewTimer);
+                message = ex.getMessage();
+                logError("--- MainActivity -> GetTokenTask ---", "Exception: [" + message + "]");
+                callbackContext.error("--- MainActivity -> GetTokenTask ---", "Exception: [" + message + "]");
+            }
+            return message;
+        }
+    }
+        
+        
+	private void getToken() {
+        new GetTokenTask().execute();
 	}
     
     private boolean genericCall() {
