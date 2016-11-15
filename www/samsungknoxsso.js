@@ -26,7 +26,7 @@ var SamsungKnoxSsoPlugin = (function() {
         // args auf erlaubten typ/inhalt prüfen
         if (Array.isArray(args)) {
             return args;
-        } else if (typeof (args) != "object" || args === null || ) {
+        } else if (typeof (args) != "object" || args === null ) {
             args = {};
         }
         return [args];  // Array erstellen
