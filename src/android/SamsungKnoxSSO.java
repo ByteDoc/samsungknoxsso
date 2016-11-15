@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
+
 import com.sec.android.service.authentication.*;
 import com.sec.android.service.singlesignon.aidls.*;
 
