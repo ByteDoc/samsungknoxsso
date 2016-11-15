@@ -5,7 +5,7 @@ repositories{
    }
    }
   dependencies {
-   compile(name:'SamsungKnoxSSO', ext:'jar')
+   compile(name:'samsungssoauth', ext:'jar')
    }
  android {
     packagingOptions {
