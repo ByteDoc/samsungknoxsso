@@ -54,7 +54,7 @@ public class SamsungKnoxSSO extends CordovaPlugin {
         try {
             action = CordovaAction.valueOf(actionString);
         } catch (IllegalArgumentException e) {
-            logError("Error: JSONException " + e + " was thrown. No valid action supplied!");
+            logError("Error: IllegalArgumentException " + e + " was thrown. No valid action supplied!");
             callbackContext.error(e.getMessage());
             return false;
         }
@@ -117,11 +117,11 @@ public class SamsungKnoxSSO extends CordovaPlugin {
                 }
             } catch (NotAuthenticatedException ex) {
                 message = ex.getMessage();
-                logError("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
+                logError("--- MainActivity -> GetTokenTask --- NotAuthenticatedException: [" + message + "]");
                 callbackContext.error("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
             } catch (SecurityProviderNotFoundException ex) {
                 message = ex.getMessage();
-                logError("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
+                logError("--- MainActivity -> GetTokenTask --- SecurityProviderNotFoundException: [" + message + "]");
                 callbackContext.error("--- MainActivity -> GetTokenTask --- Exception: [" + message + "]");
             }
             return message;
